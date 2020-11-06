@@ -1,0 +1,92 @@
+---
+title: "Wright-Fisher Homework"
+author: "Lindsey"
+date: "11/5/2020"
+output: html_document
+---
+
+```{r}
+
+
+# Part 1: Wright-Fisher model with genetic drift and mutation
+# Created by Easton R. White
+# Last edited: 4-Nov-2020
+
+# Setting up parameter values
+N= 5        # population size, starts at 100
+p_ini= 0 # the initial frequency of the A allele, starts at 0.1
+u = 0.05      # mutation rate from a to A
+max.time=100 # time to run simulations
+
+
+sample.population <- function(p,N){
+  next_pop = vector('character',length = N)
+  for (i in 1:N){
+    new_allele = sample(x = c('A','a'),size = 1,prob=c(p + u*(1-p),(1-p)))
+    #if (new_allele=='a' & rbinom(1,1,prob = u)){new_allele='A'} # Optional line to include mutation
+    next_pop[i] = as.character(new_allele)
+  }
+  return(sum(next_pop=='A')/N) # returns the value for p
+}
+
+
+
+p = vector(mode = 'numeric',length = max.time)
+p[1]=p_ini
+
+for (t in 1:(max.time-1)){
+  p[t+1] = sample.population(p[t],N)
+}
+
+plot(1:max.time,p,ylim=c(0,1),type='l',las=1,ylab='Freq(A)',xlab='Time')
+
+```
+
+# Questions 
+
+# 1. What is the effect of population size (N) on the probability of extinction of A allele?
+
+As the population size becomes larger, the probability of extinction of A alelle declines.
+
+# 2. How does the initial frequency of the A allele affect the probability it will reach fixation?
+
+As you increase the initial frequency, the probability of the A allele reaching fixation becomes larger. The initial frequency must be increased to at least 0.4 in order to reach fixation. 
+
+# 3. Let's now study the combined effects of mutation and genetic drift. Modify the above code to include a probability, u, that if a small "a" allele is chosen, it will mutate to be a big A allele. How does this affect our findings in questions 1 and 2?
+
+This affects our findings because now the A allele will always reach fixation, even if the initial A frequency is set to 0.
+
+
+
+
+
+#### PART 2: Quantitative Genetics with Reed deer on island of Jersey
+
+# Key stats
+## Population established there 6000 years ago
+## Change in mean body weight from 220kg to 36kg
+## 5 year generation time, heritability of 0.5
+
+# Questions to address for homework:
+
+# 1. What is the mean change in body weight per generation?
+
+generation <- 6000/5
+change <- (220-36)/generation
+
+# 2. What is the mean change in body weight caused by selection (estimate S)?
+
+# Breeder's Equation: R = h^2 * S
+
+R <- change
+h <- 0.5
+
+S <- (R/h)
+
+
+# 3. What assumptions are we making in these calculations?
+
+One assumption made in these calculations includes assuming the mean body weight changed consistently each generation. These calculations do no take into account that mean body weight may have changed drastically between some generations, or not at all between others.
+
+We are also making assumptions in h^2. Since we can never know all of the genes influencing a certain trait, h^2 is determined by looking at phenotypes between parents and offspring. Since we do not know the exact genotype of the individuals, h^2 is a population parameter and not an individual parameter. 
+  
